@@ -1,0 +1,202 @@
+# 🎯  Objectives ----
+# Hypotheses
+# Diet nutritional quality affects body mass (condition).
+# The effect of body condition on sexual signalling activity depends on nutritional quality diet.
+
+# 🦗 Brief intro to study 🦗 ----
+# No organism lives without expending energy. 
+# Energy primarily supports internal metabolism, heat production and physical activity. Of these, physical activity can cause the most significant variation in the rate of energy expenditure. 
+# Given that animals must always engage in some behaviour, even during periods of inactivity, the associated variation in energy expenditure is a crucial link between behaviour and overall fitness.
+
+# 📑 Aim ----
+# To assess whether there is a relationship between total calling effort and change in body mass dependent upon diet acquisition.
+# _____________________________________________________________________________________________---
+# 📦 PACKAGES ----
+library(tidyverse)
+library(kableExtra)
+library(janitor)
+library(performance)
+library(readr)
+library(RColorBrewer)
+library(colorBlindness)
+# _____________________________________________________________________________________________----
+# 🚚 LOAD DATA 🦗 ----
+cricket <- read_csv("data/cricket_song.csv")
+
+cricket #🦗 identified <0 and Na's = crickets lost weight during experiment?
+
+# _____________________________________________________________________________________________----
+# 🚦 CHECK DATA ----
+## check structure ----
+head(cricket)
+
+colnames(cricket)
+
+## clean up column names ----
+cricket <- janitor::clean_names(cricket)
+
+colnames(cricket) # quickly check the new variable names
+
+## change variable names ----
+cricket <- dplyr::rename(cricket,  # use rename from the dplyr package
+                         "change_mass_g" = "delta_smi",
+                         "song_total" = "song_week1",
+                         "pronotum_size" = "pronotum") 
+
+colnames(cricket) # check rename worked 😊
+
+cricket # looking good 😊
+
+## duplication and NAs ----
+# check for duplicate rows in the data
+cricket %>% 
+  duplicated() %>% # produces a list of TRUE/FALSE statements for duplicated or not
+  sum() # sums all the TRUE statements = 0
+
+# Get a sum of how many observations are missing in our data frame
+cricket %>% 
+  is.na() %>% 
+  sum() # 36
+
+# replace NA with 0 to avoid loosing vital observations which could alter the final result/visual 
+cricket[is.na(cricket)] <- 0
+
+cricket %>% # recheck Na's been replaced with 0 😊
+  is.na() %>% 
+  sum() # 0
+# ____________________________________________________ -----
+# SUMMARY 🧐 ----
+# produce a summary of our data
+summary(cricket)
+glimpse(cricket)
+#__________________________----
+# change diet to factor as each cricket 🦗 was placed in separate diet environments. 
+# No cricket changed diet throughout
+cricket$diet <- as.factor(cricket$diet)
+
+summary(cricket)
+glimpse(cricket)
+
+# identify any unusual values = outliers
+mass_change_min.max <- cricket %>% 
+  group_by(diet) %>%  # subsequent functions performed "by group"
+  summarise(min=min(change_mass_g, na.rm=TRUE),     # min = -0.05779355 = crickets lost weight
+            max=max(change_mass_g, na.rm=TRUE)) %>% # max = 0.08677818 = crickets gained weight
+  kbl() %>%
+  kable_styling()
+
+mass_change_min.max
+
+# identify any unusual values = outliers, cant measure negative time (seconds)
+cricket %>%
+  group_by(diet) %>%  # subsequent functions performed "by group"
+  summarise(min=min(song_total, na.rm=TRUE),     # min = 
+            max=max(song_total, na.rm=TRUE)) %>% # max = 
+  kbl() %>%
+  kable_styling()
+
+cricket
+
+# replace negative values for song_total to 0 as cant measure negative time and removal of row could alter final result for other variables.
+# unless the cricket managed to find itself a time machine 🤔
+cricket$song_total[cricket$song_total < 0] <- 0
+cricket
+
+
+#__________________________----
+# SELECT VARIABLES FOR HYPOTHESES ---- 
+# More singing = more energy is expelled
+# Better diet = better maintenance of body mass
+# Poor diet = reduction in singing due to poor reserves to produce activity, less endurance?
+
+diet_mass_song <- dplyr::select(.data = cricket, # dplyr:: to avoid MASS conflict during linear model construction
+                                change_mass_g, diet, song_total)# the variables you want to select
+
+diet_mass_song
+
+# Group the data by Diet and calculate the mean Weight for each Diet
+cricket_mean <- cricket %>%
+  group_by(diet) %>%
+  summarize(mean_weight = mean(change_mass_g))
+
+cricket_mean
+
+# initial visual insights plot ---- 
+## diet + change_in_mass = song_total
+
+diet_mass_song_plot <- cricket %>%
+  ggplot(aes(x = change_mass_g,
+             y = song_total))+
+  geom_point(aes(colour = diet))+
+  scale_color_brewer(palette="Dark2")+ # RColorBrewer color blindness friendly pallet
+  geom_smooth(method = "lm", se = FALSE, color = "black")+
+  facet_wrap(~diet, ncol=2)+ # set number to columns
+  scale_x_continuous(limits = c(-0.06, 0.1), breaks = seq(from = -0.06, to = 0.1, by = 0.02))+ # set levels
+  scale_y_continuous(limits = c(0, 12))+
+  labs(x = "Duration of sexual signalling in 1 week (seconds)",
+       y = "Change in body mass (g)")+
+  theme_classic()+
+  theme(legend.position = "none") # removes legend
+
+diet_mass_song_plot
+
+ggsave("outputs/diet_mass_song_plot.png", dpi = 400, height = 7.5)
+
+# Checking for accessibility
+colorBlindness::cvdPlot(diet_mass_song_plot) 
+
+# boxplot for diet vs change_mass
+colour_fill <- "darkgreen"
+colour_line <- "black"
+
+diet_change_mass_plot <- cricket %>%
+  ggplot(aes(x = change_mass_g,
+             y = diet))+
+  geom_boxplot(fill = colour_fill,
+               colour = colour_line, outlier.shape = NA )+ 
+  geom_point(aes(x = change_mass_g,
+                 y = diet), size = 0.5)+
+  scale_x_continuous(limits = c(-0.06, 0.1), breaks = seq(from = -0.06, to = 0.1, by = 0.02))+
+  coord_flip()+
+  theme_classic()+
+  labs(x = "Change in Mass (g)",
+       y = "Nutritional quality (%)")
+
+diet_change_mass_plot
+ggsave("outputs/diet_change_mass_plot.png", dpi = 400)
+
+# Histogram
+change_mass_histogram <- ggplot(cricket, aes(x = change_mass_g)) +
+  geom_histogram(color= "black", fill= "darkgreen", binwidth = 0.01, bins = 12) +
+  geom_density() +
+  facet_wrap(~diet, ncol=1)+
+  scale_x_continuous(limits = c(-0.06, 0.1), breaks = seq(from = -0.06, to = 0.1, by = 0.02))+
+  theme_classic()+
+  labs(x = "Change in Mass (g)",
+       title = "Body mass changes in Gryllodes sigillatus crickets")
+
+change_mass_histogram
+
+ggsave("outputs/change_mass_histogram.png", dpi = 300)
+
+# Look at mean cricket mass0 and pronotum size ----
+cricket_mass0_summary <- cricket %>%
+  summarise(mean_body_mass = mean(mass0, na.rm = T), # provide mean values
+                 sd = sd(mass0, na.rm = T), # provide SD value
+                median_body_mass = median(mass0, na.rm = T), # provide median value
+               iq_range = IQR(mass0, na.rm = T)) # provide Inter Quatile range value
+ 
+cricket_mass0_summary %>% 
+  kbl() %>% 
+  kable_styling()
+
+ 
+cricket_size_summary <- cricket %>%
+  summarise(mean_body_size = mean(pronotum_size, na.rm = T), # provide mean values
+            sd = sd(pronotum_size, na.rm = T), # provide SD value
+            median_body_size = median(pronotum_size, na.rm = T), # provide median value
+            iq_range = IQR(pronotum_size, na.rm = T)) # provide Inter Quatile range value
+
+cricket_size_summary %>%
+  kbl() %>% 
+  kable_styling()

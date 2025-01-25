@@ -1,0 +1,384 @@
+# KOOKI_3 = Is there evidence of the weather variables influencing chick productivity among the oct birds? ----
+# one way ANOVA
+# levene_test(yields~variety, carrot)
+# aov() = lsmodel01 <- aov(yields ~ variety, data = carrot) summary(lsmodel01)
+# TukeyHSD(lsmodel01, conf.level=.95) 
+# Perform a d Tukey test on our ANOVA, stored in lsmodel01 with confidence levels of 95%.
+# ggplot(data = carrot_yields, aes(x = Variety, y = Yields)) + geom_boxplot()
+
+# group plots
+# ____________________________________________________________________________----
+# 🚚 LOAD R OBJECTS AND FUNCTIONS ----
+# Import tidied data and functions
+source("scripts/clean_kooki.R")
+kooki
+# ____________________________________________________________________________----
+# FILTERING ----
+kooki_weather <- dplyr::select(.data = kooki, # dplyr:: to avoid MASS conflict during linear model construction
+                        wild, jan_rain, feb_rain, sept_temp, oct_temp)  # variables want to select.
+
+kooki_weather
+
+# Rename column names
+kooki_weather <- dplyr::rename(kooki_weather,  # use rename from the dplyr package
+                      "January" = "jan_rain",
+                      "February" = "feb_rain",
+                      "September" = "sept_temp",
+                      "October" = "oct_temp")
+kooki_weather
+
+# PIVOT LONGER ----
+kooki_weather <- kooki_weather %>% 
+  pivot_longer(cols = wild, names_to = "bird", 
+                            values_to = "chicks") 
+
+kooki_weather
+
+kooki_weather_rain <- kooki_weather %>% 
+  pivot_longer(cols = January:February,
+               names_to = "month_rain", # organise by rain
+               values_to = "rain") 
+
+kooki_weather_rain <- dplyr::select(.data = kooki_weather_rain, # dplyr:: to avoid MASS conflict during linear model construction
+                                  bird, chicks, month_rain, rain)  # variables want to select.
+
+kooki_weather_rain
+
+kooki_weather_temp <- kooki_weather %>% 
+  pivot_longer(cols = September:October,
+                names_to = "month_temp", # organise by rain
+                values_to = "temp") 
+
+kooki_weather_temp <- dplyr::select(.data = kooki_weather_temp, # dplyr:: to avoid MASS conflict during linear model construction
+                              bird, chicks, month_temp, temp)  # variables want to select.
+
+kooki_weather_temp
+
+# ____________________________________________________________________________----
+# DESCRITIVE STATS ----
+## RAIN ----
+mode <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+kooki_rain_summary <- kooki_weather_rain %>%
+  group_by(month_rain) %>%
+  summarise(n=n(),
+            range=max(rain)-min(rain), 
+            # subtracting the smallest rain value from the largest rain value to give the range
+            # range = jan(2.5), feb(3.9)
+            mean=mean(rain), # mean = jan(1.48), feb (1.68)
+            sd=sd(rain), # standard deviation = jan(0.702), feb (0.924)
+            se=sd/sqrt(n()), # standard error jan(0.131), feb(0.173)
+            median=median(rain), # median = jan(1.5), feb (1.6)
+            mode=mode(rain), # mode = jan(1.1), feb (1.8)
+            ci_lower = mean - 1.96 * se, # Lower bound of the 95% CI jan(1.22), feb (1.34)
+            ci_upper = mean + 1.96 * se) # Upper bound of the 95% CI jan(1.73), feb (2.02)
+
+kooki_rain_summary
+
+kooki_rain_plot <- kooki_weather_rain %>%
+  ggplot(aes(x=rain)) +
+  geom_histogram(bins = 10) +
+  facet_wrap(~month_rain)+
+  theme_classic()
+kooki_rain_plot # looking good 😊
+
+## TEMP ----
+kooki_temp_summary <- kooki_weather_temp %>%
+  group_by(month_temp) %>%
+  summarise(n=n(),
+            range=max(temp)-min(temp), 
+            # subtracting the smallest temp value from the largest temp value to give the range
+            # range = sept(5.4), oct(5.45)
+            mean=mean(temp), # mean = sept(15.8), oct(17.8)
+            sd=sd(temp), # standard deviation = sept(1.47), oct(1.06)
+            se=sd/sqrt(n()), # standard error sep(0.28), oct(0.20)
+            median=median(temp), # median = sept(16.1), oct(17.9)
+            mode=mode(temp), # mode = sept(16.1), oct(17.5)
+            ci_lower = mean - 1.96 * se, # Lower bound of the 95% CI sep(15.3), oct (17.4)
+            ci_upper = mean + 1.96 * se) # Upper bound of the 95% CI sep(16.4), oct (18.1)
+
+kooki_temp_summary
+
+kooki_temp_plot <- kooki_weather_temp %>%
+  ggplot(aes(x=temp)) +
+  geom_histogram(bins = 10) +
+  facet_wrap(~month_temp)+
+  theme_classic()
+kooki_temp_plot # looking good 😊
+
+# ____________________________________________________________________________----
+# PLOT ----
+## RAIN ----
+kooki_weather_rain
+
+kooki_jan <- kooki_weather_rain %>%  # pipe kooki data frame into next function 
+  filter(month_rain == "January") # filter the piped data frame and only keep jan
+kooki_jan
+
+kooki_jan_plot <-
+  ggplot(data = kooki_jan, aes(x=rain)) + # temp
+  geom_histogram(bins = 5, fill="olivedrab4") # normal distribution
+kooki_jan_plot # pretty good for distribution 📊
+
+kooki_feb <- kooki_weather_rain %>%  # pipe kooki data frame into next function 
+  filter(month_rain == "February") # filter the piped data frame and only keep feb
+kooki_feb
+
+kooki_feb_plot <-
+  ggplot(data = kooki_feb, aes(x=rain)) + # temp
+  geom_histogram(bins = 5, fill="mediumpurple4") # normal distribution
+kooki_feb_plot # pretty good for distribution 📊
+
+# desired order 
+desired_order_rain <- c("January", "February")
+kooki_weather_rain$month_rain <- factor(kooki_weather_rain$month_rain, levels = desired_order_rain)
+
+kooki_rain_plot2 <- kooki_weather_rain %>%
+  ggplot(aes(x = rain, fill = month_rain)) +
+  geom_histogram(binwidth = 0.25, color = "black") +
+  scale_fill_manual(values = c("January" = "#01949A", "February" = "#004369")) +
+  facet_wrap(~month_rain) +
+  theme_classic()+
+  labs(x = "Maximum daytime rainfall (cm)",
+       y = "Count")+
+  custom_theme()   # element blank for right (wild) graph
+
+kooki_rain_plot2
+ggsave("figures/kooki_rain_plot2.png", dpi = 400)
+
+## TEMP ----
+kooki_oct <- kooki_weather_temp %>%  # pipe kooki data frame into next function 
+  filter(month_temp == "October") # filter the piped data frame and only keep oct
+kooki_oct
+
+kooki_oct_plot <-
+  ggplot(data = kooki_oct, aes(x=temp)) + # temp
+  geom_histogram(bins = 5, fill="olivedrab4") # normal distribution
+kooki_oct_plot # pretty good for distribution 📊
+
+kooki_sept <- kooki_weather_temp %>%  # pipe kooki data frame into next function 
+  filter(month_temp == "September") # filter the piped data frame and only keep sept
+kooki_sept
+
+kooki_sept_plot <-
+  ggplot(data = kooki_sept, aes(x=temp)) + # temp
+  geom_histogram(bins = 5, fill="mediumpurple4") # normal distribution
+kooki_sept_plot # pretty good for distribution 📊
+
+# desired order 
+desired_order_temp <- c("September", "October")
+kooki_weather_temp$month_temp <- factor(kooki_weather_temp$month_temp, levels = desired_order_temp)
+
+kooki_temp_plot2 <- kooki_weather_temp %>%
+  ggplot(aes(x = temp, fill = month_temp)) +
+  geom_histogram(binwidth = 0.5, bins = 10, color = "black") +
+  scale_fill_manual(values = c("September" = "#EFA710", "October" = "#9F2B00")) +
+  facet_wrap(~month_temp) +
+  theme_classic()+
+  labs(x = "Maximum daytime temperature (°C)",
+       y = "Count")+
+  custom_theme()   # element blank for right (wild) graph
+
+kooki_temp_plot2
+ggsave("figures/kooki_temp_plot2t.png", dpi = 400)
+# ____________________________________________________________________________----
+# TESTING ----
+kooki_rain_plot2 # skewed
+kooki_temp_plot2 # normal
+
+# RAIN TRANSFORMING ----
+## sqrt ----
+kooki_rain_sqrt <- kooki_weather_rain %>%
+  mutate(sqrt_rain = sqrt(kooki_weather_rain$rain))
+kooki_rain_sqrt
+
+
+kooki_rainsqrt_summary <- kooki_rain_sqrt %>%
+  group_by(month_rain) %>%
+  summarise(n=n(),
+            min=min(sqrt_rain), # jan(0.4), feb(0.5)
+            max=max(sqrt_rain), # jan(1.64), feb(2.05)
+            range=max(sqrt_rain)-min(sqrt_rain), 
+            # subtracting the smallest sqrt_rain value from the largest sqrt_rain value to give the range
+            # range = jan(1.2), feb(1.5)
+            mean=mean(sqrt_rain), # mean = jan(1.18), feb(1.25)
+            sd=sd(sqrt_rain), # standard deviation = jan(0.31), feb(0.35)
+            se=sd/sqrt(n()), # standard error = jan(0.06), feb(0.07)
+            median=median(sqrt_rain), # median = jan(1.22), feb(126)
+            mode=mode(sqrt_rain), # mode = jan(1.05), feb(1.34)
+            ci_lower = mean - 1.96 * se, # Lower bound of the 95% CI jan(1.06), feb(1.12)
+            ci_upper = mean + 1.96 * se) # Upper bound of the 95% CI jan(1.29), feb(1.38)
+
+kooki_rainsqrt_summary
+
+kooki_rain_sqrt_plot <- kooki_rain_sqrt %>%
+  ggplot(aes(x = sqrt_rain, fill = month_rain)) +
+  geom_histogram(binwidth = 0.05, color = "black") +
+  scale_fill_manual(values = c("January" = "#01949A", "February" = "#004369")) +
+  scale_y_continuous(limits = c(0, 4)) +
+  facet_wrap(~month_rain) +
+  theme_classic()+
+  theme(legend.position = "none")+
+  labs(x = "Maximum daytime rainfall (cm)",
+       y = "Count")+
+  custom_theme()
+
+kooki_rain_sqrt_plot
+ggsave("figures/kooki_rain_sqrt_plot.png", dpi = 400) # USE IN RESULTS REPORT
+
+## log10  ----
+kooki_rain_log <- kooki_weather_rain %>%
+  mutate(rain_log = log10(kooki_weather_rain$rain))
+kooki_rain_log
+
+kooki_rain2_summary <- kooki_rain_log %>%
+  group_by(month_rain) %>%
+  summarise(n=n(),
+            min=min(rain_log), # jan(-0.7), feb(-0.5)
+            max=max(rain_log), # jan(0.43), feb(0.62)
+            range=max(rain_log)-min(rain_log), 
+            # subtracting the smallest rain_log value from the largest rain_log value to give the range
+            # range = jan(1.13), feb(1.15)
+            mean=mean(rain_log), # mean = jan(0.105), feb(0.158)
+            sd=sd(rain_log), # standard deviation = jan(0.265), feb(0.262)
+            se=sd/sqrt(n()), # standard error = jan(0.05), feb(0.05)
+            median=median(rain_log), # median = jan(0.18), feb(0.20)
+            mode=mode(rain_log), # mode = jan(0.04), feb(0.25)
+            ci_lower = mean - 1.96 * se, # Lower bound of the 95% CI jan(0.009), feb(0.06)
+            ci_upper = mean + 1.96 * se) # Upper bound of the 95% CI jan(0.20), feb(0.25)
+
+kooki_rain2_summary
+
+# log10 plot
+kooki_rain_log_plot <- kooki_rain_log %>%
+  ggplot(aes(x = rain_log, fill = month_rain)) +
+  geom_histogram(binwidth = 0.05, color = "black") +
+  scale_fill_manual(values = c("January" = "#01949A", "February" = "#004369")) +
+  scale_x_continuous(limits = c(-0.8, 0.8), breaks = seq(-0.8, 0.8, by = 0.2)) +
+  scale_y_continuous(limits = c(0, 5)) +
+  facet_wrap(~month_rain) +
+  theme_classic()+
+  theme(legend.position = "none")+
+  labs(x = "Maximum daytime rainfall (cm)",
+       y = "Count")+
+  custom_theme()
+
+kooki_rain_log_plot # improved distribution
+
+## transformation plots ----
+kooki_rain_sqrt_plot # best performance
+kooki_rain_log_plot 
+kooki_rain_plot2 
+
+# ____________________________________________________________________________----
+# TESTING ----
+kooki_weather_rain
+kooki_rain_sqrt
+
+# Perform Levene's Test 
+kooki_rain_leveneTest <- leveneTest(sqrt_rain ~ month_rain, data = kooki_rain_sqrt)
+kooki_rain_leveneTest   #       Df  F value Pr(>F) 
+                        # group  1  0.0506  0.8228 
+
+# ANOVA 
+kooki_rain_model1 <- aov(chicks ~ sqrt_rain + month_rain + month_rain:rain, data = kooki_rain_sqrt) 
+summary(kooki_rain_model1)
+#       Df  Sum Sq Mean Sq  F value  Pr(>F)   
+# rain  1   0.1385 0.13850  12.607    0.000796 ***
+anova_table_rain <- summary(kooki_rain_model1)
+anova_table_rain
+
+# Perform a d Tukey test on our ANOVA, stored in lsmodel01 with confidence levels of 95%.
+TukeyHSD(kooki_rain_model1, conf.level=.95) 
+p > 0.1
+
+# Kooki1 sqrt boxplot ----
+ggplot(data = kooki_rain_sqrt, aes(x = sqrt_rain, y = chicks), colour = month_rain) +
+  geom_point()+
+  facet_wrap(~month_rain)+
+  scale_colour_manual(values = c("January" = "#01949A", "February" = "#004369")) +
+  theme_classic()+
+  labs(y = "Maximum daytime rainfall (cm)",
+       x = "Month")+
+  custom_theme()
+
+ggplot(data = kooki_weather_temp, aes(x = temp, y = chicks)) +
+  geom_point()+
+  facet_wrap(~month_temp)
+
+# add lables and set y axis lables 
+kooki_rain_boxplot <- kooki_rain_sqrt %>%
+  ggplot(aes(x = month_rain, y = sqrt_rain, fill = month_rain)) +
+  geom_boxplot(width = 0.8)+
+  scale_x_discrete(limits = desired_order_rain) + 
+  scale_y_continuous(limits = c(0, 3)) +
+  scale_fill_manual(values = c("January" = "#01949A", "February" = "#004369")) +
+  theme_classic()+
+  labs(y = "Maximum daytime rainfall (cm)",
+       x = "Month")+
+  custom_theme()
+
+kooki_rain_boxplot
+ggsave("figures/kooki1_boxplot.png", dpi = 400) # USE IN RESULTS REPORT
+
+
+# TEMPERATURE TESTING ----
+kooki_weather_temp
+# ANOVA 
+kooki_temp_model1 <- aov(chicks ~ temp + month_temp + month_temp:temp, data = kooki_weather_temp) 
+summary(kooki_temp_model1)
+p > 0.1
+
+# Perform a d Tukey test on our ANOVA, stored in lsmodel01 with confidence levels of 95%.
+TukeyHSD(kooki_temp_model1, conf.level=.95) 
+p > 0.1
+
+# ____________________________________________________________________________----
+# FINAL PLOT ----
+# scatter plot = temp, month, chick
+
+kooki_rain_scatter <- kooki_weather_rain %>%
+  ggplot(aes(x = rain, y = chicks)) +
+  geom_point(aes(colour = month_rain), size = 4)+
+  geom_smooth(aes(colour = "black"), method = "lm", se = FALSE)+
+  facet_wrap(~month_rain)+
+  scale_colour_manual(values = c("January" = "#01949A", "February" = "#004369")) +
+  theme_classic()+
+  labs(x = "Maximum daytime rainfall (cm)",
+       y ="Mean no. of chicks produced per pair",
+       colour = "Month")+
+  custom_theme()+
+  theme(panel.spacing = unit(3, "lines"))
+
+kooki_rain_scatter
+ggsave("figures/kooki_rain_scatter.png", dpi = 400) # USE IN RESULTS REPORT
+
+kooki_weather_temp
+
+kooki_temp_scatter <- kooki_weather_temp %>%
+  ggplot(aes(x = temp, y = chicks)) +
+  geom_point(aes(colour = month_temp), size = 4) +
+  geom_smooth(aes(colour = "black"), method = "lm", se = FALSE)+
+  facet_wrap(~month_temp)+
+  scale_colour_manual(values = c("September" = "#EFA710", "October" = "#9F2B00")) + 
+  theme_classic() +
+  labs(
+    x = "Maximum daytime temperatures (°C)",
+    y = "Mean no. of chicks produced per pair",
+    colour = "Month") +
+  custom_theme()+
+  theme(panel.spacing = unit(3, "lines"))
+
+
+kooki_temp_scatter
+ggsave("figures/kooki_temp_scatter.png", dpi = 400)
+
+
+# Combine the boxplots 
+install.packages("gridExtra")
+library("gridExtra")
+combined_plot <- grid.arrange(kooki_rain_boxplot, kooki_temp_boxplot, nrow = 2)
+combined_plot
