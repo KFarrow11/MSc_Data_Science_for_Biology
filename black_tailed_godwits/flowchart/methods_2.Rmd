@@ -1,0 +1,178 @@
+---
+title: "methods_2"
+author: '100318577'
+date: "2025-04-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(vegan)
+library(car)
+library(gt)
+library(broom)
+```
+
+# Methods
+
+## Introduction
+
+Wetlands provide critical breeding and foraging habitats for a variety of bird species, including the black-tailed godwit (*Limosa limosa*), a ground-nesting wader of conservation concern. To better understand the habitat requirements of this species, this study investigated environmental drivers of godwit presence and density across multiple wetland sites.
+
+We addressed two key objectives:
+
+1. Identify the environmental conditions associated with the **presence or absence** of black-tailed godwits.
+2. Determine which environmental conditions influence **godwit density** in sites where they are present.
+
+These analyses aim to inform habitat management practices in ecologically sensitive wetlands.
+
+---
+
+## Aim 1: Environmental Predictors of Godwit Presence
+
+### Dataset Preparation
+
+The response variable `god_occur` (1 = presence, 0 = absence) was modeled using a suite of environmental predictors including elevation, vegetation structure, hydrology, and land-use features.
+
+### Exploratory Analysis and Data Reduction
+
+A **Detrended Correspondence Analysis (DCA)** confirmed that linear ordination methods were appropriate for this dataset.
+
+```{r dca}
+# dca_result <- decorana(godwits[, environmental_vars])
+# summary(dca_result)
+```
+
+A **Principal Component Analysis (PCA)** helped reduce multicollinearity among predictors:
+
+```{r pca}
+# pca_result <- prcomp(godwits[, environmental_vars], scale. = TRUE)
+# summary(pca_result)
+# biplot(pca_result)
+```
+
+### Statistical Modeling
+
+A binomial **Generalized Linear Model (GLM)** was used to predict the probability of godwit presence.
+
+```{r glm-initial}
+glm_model <- glm(god_occur ~ elevation + swardht + willow_cover + birch_cover +
+                 juncus_cover + sand_gravel_cover + num_ditches +
+                 water_table_depth + hayfield + num_sedgepools + pool_cover,
+                 family = binomial(link = "logit"),
+                 data = godwits)
+summary(glm_model)
+```
+
+After refinement:
+
+```{r glm-final}
+final_glm <- glm(god_occur ~ elevation + birch_cover + water_table_depth +
+                 num_sedgepools + pool_cover,
+                 family = binomial(link = "logit"),
+                 data = godwits)
+summary(final_glm)
+```
+
+### Summary for Aim 1
+
+This model indicates that **elevation**, **birch cover**, and **water table depth** are significant predictors of godwit occurrence, highlighting the importance of vegetation composition and hydrology in supporting breeding godwits.
+
+---
+
+## Aim 2: Environmental Predictors of Godwit Density
+
+### Dataset Preparation
+
+Only observations with godwit presence (`god_occur == 1`) were retained for the density analysis.
+
+```{r filter-density}
+godwit_presence <- godwits %>% filter(god_occur == 1)
+
+godwit_den <- godwit_presence %>%
+  relocate(god_occur, god_density, .before = 1)
+```
+
+### Exploratory Analysis
+
+Scatterplot matrices were used to assess relationships between godwit density and predictor variables.
+
+```{r pairs-plot}
+pairs(godwit_den[, c(2:13)])
+```
+
+### Statistical Modeling
+
+#### Linear Regression Models
+
+**Full model:**
+
+```{r lm-full}
+density_lm1 <- lm(god_density ~ elevation + swardht + willow_cover + birch_cover +
+                   juncus_cover + sand_gravel_cover + num_ditches +
+                   water_table_depth + hayfield + num_sedgepools + pool_cover,
+                   data = godwit_den)
+summary(density_lm1)
+```
+
+**Simplified model:**
+
+```{r lm-simple}
+density_lm2 <- lm(god_density ~ swardht + hayfield, data = godwit_den)
+summary(density_lm2)
+```
+
+**Interaction model:**
+
+```{r lm-interaction}
+density_lm2b <- lm(god_density ~ swardht * hayfield, data = godwit_den)
+summary(density_lm2b)
+```
+
+#### Generalized Linear Model (Poisson)
+
+```{r poisson-glm}
+den_glm2 <- glm(god_density ~ swardht + willow_cover + birch_cover +
+                juncus_cover + sand_gravel_cover + num_ditches +
+                water_table_depth + hayfield + num_sedgepools + pool_cover,
+                family = poisson(link = "log"),
+                data = godwit_den)
+summary(den_glm2)
+```
+
+### Presentation of Results
+
+A table summarizing coefficients from the simplified linear model:
+
+```{r glm-table}
+tidy_glm <- tidy(density_lm2) %>%
+  mutate(estimate = round(estimate, 2),
+         std.error = round(std.error, 2),
+         p.value = ifelse(p.value < 0.001, "< 0.001", round(p.value, 3)))
+
+glm_table <- gt(tidy_glm) %>%
+  tab_header(
+    title = md("GLM Results"),
+    subtitle = md("Factors Influencing Godwit Density")
+  )
+
+glm_table
+```
+
+To save the table:
+
+```{r save-table, eval=FALSE}
+gtsave(glm_table, "tables/glm_results.png")
+```
+
+### Summary for Aim 2
+
+Vegetation height (sward) and proximity to hayfields emerged as significant drivers of godwit density. These findings suggest that vegetation structure and adjacent land management practices shape breeding suitability within occupied wetlands.
+
+---
+
+## Conclusion
+
+This study highlights key ecological factors influencing both the **distribution** and **abundance** of black-tailed godwits. Variables such as **elevation**, **hydrology**, and **vegetation structure** significantly affect godwit presence and density. These results provide actionable insights for the conservation and restoration of wetland habitats essential for sustaining godwit populations.
+

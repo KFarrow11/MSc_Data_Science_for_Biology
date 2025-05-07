@@ -1,0 +1,25 @@
+{
+    "id": "38F78221",
+    "path": "C:/Users/Katie/Desktop/Data science for biology/sem1/Stats for Bio/summative_2/godwits/scripts/aim2/density.R",
+    "project_path": "scripts/aim2/density.R",
+    "type": "r_source",
+    "hash": "2017871424",
+    "contents": "",
+    "dirty": false,
+    "created": 1737142016023.0,
+    "source_on_save": false,
+    "relative_order": 4,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "ignored_words": "stats,godwit\n"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1745393626,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1745393665816,
+    "read_only": false,
+    "read_only_alternatives": []
+}

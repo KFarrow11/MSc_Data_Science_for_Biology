@@ -1,0 +1,348 @@
+---
+title: "Methods"
+author: '100318577'
+date: "2025-04-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# Setting up the environment
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+# Loading required libraries
+library(tidyverse)  # For data manipulation and visualization
+library(vegan)      # For ordination methods like DCA and PCA
+library(car)        # For multicollinearity checks
+library(gt)         # For creating formatted tables
+library(broom)      # For tidying model outputs
+```
+
+---
+
+# Methods
+
+## Study Design and Data Collection
+
+This study investigated the environmental factors influencing the presence or absence of black-tailed godwits (*Limosa limosa*) in wetland habitats. Data was collected across multiple sites, recording both the presence (1) or absence (0) of godwits and a comprehensive set of environmental variables at each location. The following environmental variables were measured:
+
+- **elevation**: meters above sea level
+- **swardht**: vegetation height categories (1 = 0-5 cm, 2 = 5-10 cm, 3 = 10-20 cm, 4 = 20-40 cm)
+- **willow_cover**: percentage cover of willows (*Salix spp.*)
+- **birch_cover**: percentage cover of dwarf birch (*Betula nana*)
+- **juncus_cover**: percentage cover of *Juncus arcticus*, typically found in wetlands
+- **sand_gravel_cover**: percentage cover of sand and gravel
+- **num_ditches**: number of surrounding drainage ditches (a measure of land drainage extent)
+- **water_table_depth**: depth of the water table in centimeters
+- **hayfield**: distance to the nearest hayfield in meters (often used by feeding godwits)
+- **num_sedgepools**: number of sedge pools (pools with sedge plants growing in shallows)
+- **pool_cover**: percentage cover of pools within the patch
+- **god_occur**: godwit presence (1) or absence (0)
+- **god_density**: density of black-tailed godwits (number/ha)
+
+---
+## Data Preparation
+#### Variable Conversion and Renaming
+Prior to analysis, categorical variables (swardht, num_ditches, and num_sedgepools) were converted to factors for Generalized Linear Models (GLMs). This step ensures that these variables are treated as categorical predictors in the models, which is critical for accurate statistical interpretation. For Principal Component Analysis (PCA), all variables were retained in numeric format to allow for dimensionality reduction.
+
+```{r prep, include=FALSE}
+# Convert categorical variables to factors for GLMs
+godwits$swardht <- as.factor(godwits$swardht)
+godwits$ditches <- as.factor(godwits$ditches)
+godwits$sedpools <- as.factor(godwits$sedpools)
+```
+To maintain consistency across datasets and analyses, variable names were standardized using the rename() function from the dplyr package. This step ensures that variable names are intuitive and consistent, facilitating easier interpretation and reproducibility.
+
+```{r rename, include=FALSE}
+# Rename variables for consistency
+godwits <- dplyr::rename(godwits,
+    "willow_cover" = "willows",
+    "birch_cover" = "birch",
+    "juncus_cover" = "juncus",
+    "sand_gravel_cover" = "sand",
+    "num_ditches" = "ditches",
+    "water_table_depth" = "watertab",
+    "hayfield" = "disthay",
+    "num_sedgepools" = "sedpools",
+    "pool_cover" = "poolcov",
+    "god_occur" = "godoccur",
+    "god_density" = "goddens")
+```
+##### Dataset Preparation for Aim 2
+For the analysis of godwit density (Aim 2), the dataset was filtered to include only rows where godwits were present (god_occur == 1). This ensures that the analysis focuses solely on environmental factors influencing density in occupied sites. Additionally, columns were rearranged to prioritize key variables (god_occur and god_density) for easier interpretation.
+
+```{r filter, include=FALSE}
+# Filter dataset to include only sites with godwit presence
+godwit_presence <- godwits %>% filter(god_occur == 1)
+
+# Rearrange columns: move god_occur and god_density to the beginning
+godwit_den <- godwit_presence %>% 
+  relocate(god_occur, god_density, .before = 1)
+```
+##### Dataset Preparation for PCA
+For PCA, a separate dataset was prepared to ensure compatibility with dimensionality reduction techniques. Variable names were standardized as described earlier, and numeric formats were retained for all variables.
+
+```{r pca, include=FALSE}
+# Load PCA dataset
+pca_godwits <- read.csv("data/godwit_data.csv")
+
+# Rename variables for consistency
+pca_godwits <- dplyr::rename(pca_godwits,
+    "willow_cover" = "willows",
+    "birch_cover" = "birch",
+    "juncus_cover" = "juncus",
+    "sand_gravel_cover" = "sand",
+    "num_ditches" = "ditches",
+    "water_table_depth" = "watertab",
+    "hayfield" = "disthay",
+    "num_sedgepools" = "sedpools",
+    "pool_cover" = "poolcov",
+    "god_occur" = "godoccur",
+    "god_density" = "goddens")
+```
+---
+
+## Descriptive Statistics
+
+Before conducting detailed statistical analyses, descriptive statistics were calculated for all environmental variables to understand their distribution and variability. Custom functions were implemented to calculate standard error and comprehensive descriptive statistics, including minimum, maximum, mean, median, standard error, standard deviation, range, and skewness for each variable.
+
+### Key Findings
+
+- Variables such as **pool cover** and **sand/gravel cover** exhibited pronounced skewness, indicating asymmetrical distributions that may represent critical or limiting conditions affecting godwit habitat selection.
+- Variables such as **sward height** and **water table depth** displayed more balanced distributions, suggesting their availability might be more consistent throughout the habitat.
+- Substantial ranges observed for certain variables—particularly **hayfield distance** (0–1500 meters) and **birch cover** (0–90%)—highlighted the diversity of ecological conditions within the study area.
+
+These descriptive findings provided important context for subsequent analyses and informed the interpretation of factors most likely to influence godwit presence and habitat selection.
+
+---
+
+## Aim 1: Environmental Predictors of Godwit Presence
+
+### Exploratory Analysis and Data Reduction
+
+#### Detrended Correspondence Analysis (DCA)
+
+- **What**: DCA was used to assess gradient lengths and confirm that linear methods were suitable for presence/absence data.
+- **Why**: To determine whether linear or unimodal methods were appropriate for the dataset.
+- **How**: Gradient lengths < 3 indicated that linear methods (e.g., PCA, GLM) were appropriate.
+
+```{r dca, include=FALSE}
+# Example DCA code (commented out for demonstration)
+# dca_result <- decorana(godwits[, environmental_vars])
+# summary(dca_result)
+```
+
+#### Principal Component Analysis (PCA)
+
+- **What**: PCA was applied to reduce dimensionality and address potential collinearity among predictors.
+- **Why**: To simplify the dataset and identify key patterns in environmental variables.
+- **How**: PCA results showed that the first four components explained ~60% of the variance.
+
+```{r pca result, include=FALSE}
+# Example PCA code
+# pca_result <- prcomp(godwits[, environmental_vars], scale. = TRUE)
+# summary(pca_result)
+# biplot(pca_result)
+```
+
+---
+
+### Generalized Linear Modeling (GLM)
+
+- **What**: A binomial GLM was used to predict the probability of godwit presence.
+- **Why**: To identify significant environmental predictors of godwit occurrence.
+- **How**: 
+  - A full model was fitted with all predictors.
+  - Iterative refinement removed non-significant variables.
+
+```{glm, include=FALSE}
+glm_model <- glm(god_occur ~ elevation + swardht + willow_cover + birch_cover +
+                 juncus_cover + sand_gravel_cover + num_ditches +
+                 water_table_depth + hayfield + num_sedgepools + pool_cover,
+                 family = binomial(link = "logit"),
+                 data = godwits)
+summary(glm_model)
+```
+
+**Final Model**:
+
+```{r glm2, include=FALSE}
+final_glm <- glm(god_occur ~ elevation + birch_cover + water_table_depth +
+                 num_sedgepools + pool_cover,
+                 family = binomial(link = "logit"),
+                 data = godwits)
+summary(final_glm)
+```
+
+### Key Findings
+
+- Significant predictors of godwit presence included:
+  - **Elevation**
+  - **Birch cover**
+  - **Water table depth**
+  - **Number of sedge pools**
+  - **Pool cover**
+
+---
+
+## Aim 2: Environmental Predictors of Godwit Density
+
+### Dataset Preparation
+
+- **What**: The dataset was filtered to include only rows where godwits were present (`god_occur == 1`).
+- **Why**: To focus on environmental conditions influencing godwit density in occupied sites.
+- **How**: The `filter()` and `relocate()` functions were used to streamline the dataset.
+
+```{r density, include=FALSE}
+# Filter godwit presence
+godwit_presence <- godwits %>% filter(god_occur == 1)
+
+# Rearrange columns: move god_occur and god_density to the beginning
+godwit_den <- godwit_presence %>% 
+  relocate(god_occur, god_density, .before = 1)
+```
+
+---
+
+### Exploratory Analysis
+
+#### Scatterplot Matrix
+
+- **What**: A scatterplot matrix was created to visualize relationships between godwit density and environmental variables.
+- **Why**: This step helps identify potential correlations, trends, or outliers in the data.
+- **How**: The `pairs()` function was used to generate a matrix of scatterplots for selected variables.
+
+```{r pairs, include=FALSE}
+# Correlation plots for density vs environmental variables
+pairs(godwit_den[, c(2:13)])
+```
+
+---
+
+### Statistical Modeling
+
+#### Multiple Linear Regression
+
+- **What**: A full multiple linear regression model was fitted to evaluate the collective influence of all environmental variables on godwit density.
+- **Why**: This approach maximizes explanatory power by including all predictors.
+- **How**: The `lm()` function was used to fit the model, and `summary()` was applied to examine the results.
+
+```{r lm, include=FALSE}
+density_lm1 <- lm(god_density ~ elevation + swardht + willow_cover + birch_cover +
+                   juncus_cover + sand_gravel_cover + num_ditches +
+                   water_table_depth + hayfield + num_sedgepools + pool_cover,
+                   data = godwit_den)
+summary(density_lm1)
+```
+
+**Simplified Model**:
+
+```{r lm2, include=FALSE}
+density_lm2 <- lm(god_density ~ swardht + hayfield, data = godwit_den)
+summary(density_lm2)
+```
+
+**Interaction Model**:
+
+```{ lm2b}
+density_lm2b <- lm(god_density ~ swardht * hayfield, data = godwit_den)
+summary(density_lm2b)
+```
+
+---
+
+#### Generalized Linear Model (Poisson)
+
+- **What**: A Poisson GLM was fitted to account for the count-based nature of the response variable (`god_density`).
+- **Why**: Linear regression assumes a normally distributed response variable, which may not be appropriate for count data.
+- **How**: The `glm()` function was used with a Poisson family and log-link function.
+
+```{r glm2}
+den_glm2 <- glm(god_density ~ swardht + willow_cover + birch_cover +
+                juncus_cover + sand_gravel_cover + num_ditches +
+                water_table_depth + hayfield + num_sedgepools + pool_cover,
+                family = poisson(link = "log"),
+                data = godwit_den)
+summary(den_glm2)
+```
+
+---
+
+### Presentation of Results
+
+- **What**: The results of the simplified linear regression model (`density_lm2`) were formatted into a table for clear presentation.
+- **Why**: Tables provide a concise summary of key metrics (e.g., coefficients, standard errors, p-values).
+- **How**: The `broom::tidy()` function was used to clean the model output, and the `gt` package was applied to create a formatted table.
+
+```{r tidy glm, include=FALSE}
+# Tidy and format regression results
+tidy_glm <- tidy(density_lm2) %>% 
+  mutate(estimate = round(estimate, 2), 
+         std.error = round(std.error, 2), 
+         statistic = round(statistic, 2), 
+         p.value = ifelse(p.value < 0.001, "< 0.001", 
+                          ifelse(p.value < 0.01, "< 0.01", 
+                                 ifelse(p.value < 0.05, "< 0.05", round(p.value, 3)))))
+
+# Create a formatted table
+glm_table <- gt(tidy_glm) %>%
+  tab_header(
+    title = md("Generalized Linear Model (GLM) Results"),
+    subtitle = md("Influence of Environmental Conditions on Godwit Density")
+  )
+
+# Save the table as a PNG file
+gtsave(glm_table, "tables/glm_results.png")
+```
+
+---
+
+## Conclusion
+
+This study highlights key ecological factors influencing both the **distribution** and **abundance** of black-tailed godwits. Variables such as **elevation**, **hydrology**, and **vegetation structure** significantly affect godwit presence and density. These results provide actionable insights for the conservation and restoration of wetland habitats essential for sustaining godwit populations.
+
+```{r table, echo=FALSE, results='asis'}
+# Load required libraries
+library(gt)
+library(gtExtras)
+
+# Create the data frame
+methods_table <- data.frame(
+  `Aim 1: Environmental Predictors of Godwit Presence` = c(
+    "**Study Design and Data Collection**",
+    "This study investigated the environmental factors influencing the presence or absence of black-tailed godwits (*Limosa limosa*) in wetland habitats. Data was collected across multiple sites, recording both the presence (1) or absence (0) of godwits and a comprehensive set of environmental variables at each location.",
+    "**Exploratory Analysis and Data Reduction**",
+    "Detrended Correspondence Analysis (DCA) was used to assess gradient lengths and confirm that linear methods were suitable for presence/absence data. Gradient lengths < 3 indicated that linear methods (e.g., PCA, GLM) were appropriate.",
+    "Principal Component Analysis (PCA) was applied to reduce dimensionality and address potential collinearity among predictors. PCA results showed that the first four components explained ~60% of the variance.",
+    "**Generalized Linear Modeling (GLM)**",
+    "A binomial GLM was used to predict the probability of godwit presence. A full model was fitted with all predictors, and iterative refinement removed non-significant variables.",
+    "Significant predictors of godwit presence included: elevation, birch cover, water table depth, number of sedge pools, and pool cover." ,
+    "" ,
+    ""
+  ),
+  `Aim 2: Environmental Predictors of Godwit Density` = c(
+    "**Dataset Preparation**",
+    "The dataset was filtered to include only rows where godwits were present (`god_occur == 1`). Columns were rearranged to prioritize key variables (`god_occur` and `god_density`) for easier interpretation.",
+    "**Exploratory Analysis**",
+    "A scatterplot matrix was created to visualize relationships between godwit density and environmental variables. This step helped identify potential correlations, trends, or outliers in the data.",
+    "**Statistical Modeling**",
+    "Multiple linear regression was used to evaluate the collective influence of all environmental variables on godwit density. A simplified model focused on vegetation height (`swardht`) and proximity to hayfields (`hayfield`).",
+    "An interaction model explored whether the effect of vegetation height on godwit density depended on proximity to hayfields.",
+    "A Poisson GLM was fitted to account for the count-based nature of the response variable (`god_density`). This approach handled non-normal distributions and provided robust results.",
+    "**Key Findings**",
+    "Significant predictors of godwit density included vegetation height (`swardht`) and proximity to hayfields (`hayfield`). Interaction effects suggested that these variables may work synergistically to shape habitat suitability."
+  ),
+  stringsAsFactors = FALSE
+)
+
+# Convert to gt table and apply the gt_theme_pff theme
+methods_table_gt <- methods_table %>%
+  gt() %>%
+  gt_theme_pff() %>%
+  tab_header(
+    title = md("**Summary of Analytical Methods for Godwit Habitat Study**"),
+    subtitle = "Aims 1 and 2: Environmental Drivers of Presence and Density"
+  )
+
+# Print the table
+methods_table_gt
+```

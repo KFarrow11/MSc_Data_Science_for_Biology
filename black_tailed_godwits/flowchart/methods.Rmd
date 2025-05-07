@@ -1,0 +1,181 @@
+---
+title: "methods"
+author: '100318577'
+output: html_document
+---
+
+# Methods
+
+## Study Design and Data Collection
+This study investigated the environmental factors influencing the presence or absence of godwits in wetland habitats. Data was collected across multiple sites, recording both the presence (1) or absence (0) of godwits and a comprehensive set of environmental variables at each location. The following environmental variables were measured:
+
+- **elevation**: meters above sea level
+- **swardht**: vegetation height categories (1 = 0-5 cm, 2 = 5-10 cm, 3 = 10-20 cm, 4 = 20-40 cm)
+- **willow_cover**: percentage cover of willows (Salix spp.)
+- **birch_cover**: percentage cover of dwarf birch (Betula nana)
+- **juncus_cover**: percentage cover of Juncus arcticus, typically found in wetlands
+- **sand_gravel_cover**: percentage cover of sand and gravel
+- **num_ditches**: number of surrounding drainage ditches (a measure of land drainage extent)
+- **water_table_depth**: depth of the water table in centimeters
+- **hayfield**: distance to the nearest hayfield in meters (often used by feeding godwits)
+- **num_sedgepools**: number of sedge pools (pools with sedge plants growing in shallows)
+- **pool_cover**: percentage cover of pools within the patch
+- **god_occur**: godwit presence (1) or absence (0)
+- **god_density**: density of black-tailed godwits (number/ha)
+
+Prior to analysis, the categorical variables (swardht, num_ditches, and num_sedgepools) were converted to factors in the dataset used for the Generalized Linear Model (GLM), while the dataset for Principal Component Analysis (PCA) retained the numeric format for all variables.
+
+## Descriptive Statistics
+
+Before conducting detailed statistical analyses, we calculated descriptive statistics for all environmental variables to understand the distribution and variability of our data. Custom functions were implemented to calculate standard error and comprehensive descriptive statistics including minimum, maximum, mean, median, standard error, standard deviation, range, and skewness for each variable.
+
+Our analysis revealed considerable heterogeneity in habitat characteristics across the study area. Variables such as pool cover and sand/gravel cover exhibited pronounced skewness, indicating asymmetrical distributions that may represent critical or limiting conditions affecting godwit habitat selection. In contrast, variables such as sward height and water table depth displayed more balanced distributions, suggesting their availability might be more consistent throughout the habitat.
+
+The substantial ranges observed for certain variables—particularly hayfields (0–1500 meters) and birch cover (0–90%)—highlighted the diversity of ecological conditions within the study area. This variability potentially influences the availability of suitable habitats for godwits and underscores the complexity of their habitat requirements.
+
+These descriptive findings provided important context for our subsequent analyses and informed our interpretation of the factors most likely to influence godwit presence and habitat selection.
+
+## Statistical Analysis
+
+### Exploratory Analysis and Data Reduction
+Before modeling, **Detrended Correspondence Analysis (DCA)** was employed to assess gradient lengths and confirm that linear methods were suitable for presence/absence data (axis length < 3). This preliminary analysis verified that linear approaches were appropriate for the dataset.
+
+Given the 11 environmental variables included in the study, **Principal Component Analysis (PCA)** was applied to reduce dimensionality and address potential collinearity. The PCA results demonstrated that the first four principal components collectively explained approximately 60% of the total variance in the dataset, with PC1 and PC2 contributing 21.2% and 18.0%, respectively. PC1 highlighted positive correlations with Juncus cover and negative correlations with water table depth, while PC2 underscored negative correlations with woody vegetation, such as willow and birch cover. 
+
+The PCA findings also provided valuable visualization of relationships between environmental variables, enabling clearer patterns of godwit presence or absence across the principal component space. This step proved crucial for guiding model-building efforts in the subsequent analyses.
+
+### Generalized Linear Modeling
+To evaluate the environmental factors influencing godwit presence or absence, a **Generalized Linear Model (GLM)** was implemented using a binomial error distribution and logit link function. This approach was specifically chosen to handle the binary response variable (god_occur) and accurately estimate the probability of godwit occurrence based on environmental predictors.
+
+The modeling process began with a full GLM, incorporating all measured environmental variables:
+
+```r
+glm_model <- glm(god_occur ~ elevation + swardht + willow_cover + birch_cover + 
+                 juncus_cover + sand_gravel_cover + num_ditches + water_table_depth + 
+                 hayfield + num_sedgepools + pool_cover, 
+                 family = binomial(link = "logit"),
+                 data = godwits)
+```
+Iterative model refinement followed, where non-significant predictors were systematically removed. Through this process, the final model retained elevation, birch cover, water table depth, number of sedge pools, and pool cover as the most meaningful variables influencing godwit occurrence:
+
+```r
+final_glm <- glm(god_occur ~ elevation + birch_cover + water_table_depth + 
+                 num_sedgepools + pool_cover, 
+                 family = binomial(link = "logit"),
+                 data = godwits)
+```
+Model diagnostics affirmed that assumptions were satisfied, with multicollinearity checks (VIF values < 3) and residual patterns deemed acceptable. To enhance interpretability, odds ratios for each significant predictor were calculated by exponentiating the model coefficients. This allowed for practical insights into how each environmental variable affects the likelihood of godwit presence versus absence.
+
+
+# Aim 2
+To investigate the environmental factors influencing godwit density, the dataset was filtered to include only rows where godwits were present (`god_occur == 1`). This filtering ensured that the analysis focused solely on conditions relevant to godwit presence. The filtered dataset was then reorganized using `relocate()` to prioritize variables of interest (`god_occur` and `god_density`), thereby streamlining data exploration and analysis.
+
+```r
+# Filter godwit presence
+godwit_presence <- godwits %>% filter(god_occur == 1)
+
+# Rearrange columns: move god_occur and god_density to the beginning
+godwit_den <- godwit_presence %>% 
+  relocate(god_occur, god_density, .before = 1)
+```
+  
+### Exploratory Analysis
+A matrix of scatterplots (pairs()) was created to visually assess the relationships between godwit density and a range of environmental variables, including elevation, sward height, and proximity to hayfields. This exploratory step allowed the identification of potential correlations and informed the selection of predictors for subsequent statistical modeling.
+
+```r
+# Correlation plots for density vs environmental variables
+pairs(godwit_den[, c(2:13)])
+```
+
+### Statistical Modeling
+To quantify the impact of environmental variables on godwit density, the following regression models were employed:
+
+#### Multiple Linear Regression
+The initial model (density_lm1) included all environmental variables to evaluate their collective influence on godwit density. This approach aimed to maximize explanatory power and identify key predictors.
+
+```r 
+density_lm1 <- lm(god_density ~ elevation + swardht + willow_cover + birch_cover +
+                   juncus_cover + sand_gravel_cover + num_ditches +
+                   water_table_depth + hayfield + num_sedgepools + pool_cover,
+                   data = godwit_den)
+```
+A simplified model (density_lm2) was then developed to focus on sward height and hayfield proximity, two variables deemed ecologically important based on prior analysis.
+```r
+density_lm2 <- lm(god_density ~ swardht + hayfield, data = godwit_den)
+```
+
+An interaction model (density_lm2b) explored the combined effects of sward height and hayfield proximity, providing insights into their interactive influence on godwit density.
+```r
+density_lm2b <- lm(god_density ~ swardht * hayfield, data = godwit_den)
+```
+##### Generalized Linear Model (GLM)
+To account for the count-based nature of the data, a Poisson GLM with a log-link function was applied. This model handled non-normal distributions effectively while evaluating predictors such as sward height, willow cover, and water table depth.
+```r
+den_glm2 <- glm(god_density ~ swardht + willow_cover + birch_cover +
+                juncus_cover + sand_gravel_cover + num_ditches + water_table_depth +
+                hayfield + num_sedgepools + pool_cover, 
+                family = poisson(link = "log"), 
+                data = godwit_den)
+```
+##### Presentation of Results
+To ensure clarity and accessibility, the regression results from the simplified linear regression model (density_lm2) were tidied using the broom::tidy() function. The estimates, standard errors, and statistical metrics were rounded, and p-values were categorized for readability. A visually appealing table summarizing the results was created using the gt package and exported for reporting.
+
+```r
+# Tidy and format regression results
+tidy_glm <- tidy(density_lm2) %>% 
+  mutate(estimate = round(estimate, 2), 
+         std.error = round(std.error, 2), 
+         statistic = round(statistic, 2), 
+         p.value = ifelse(p.value < 0.001, "< 0.001", 
+                          ifelse(p.value < 0.01, "< 0.01", 
+                                 ifelse(p.value < 0.05, "< 0.05", round(p.value, 3))))
+
+# Create a formatted table
+glm_table <- gt(tidy_glm) %>%
+  gt_theme_pff() %>%
+  tab_header(
+    title = md("Generalized Linear Model (GLM) Results"),
+    subtitle = md("Influence of Environmental Conditions on Godwit Density"))
+
+# Save the table as a PNG file
+gtsave(glm_table, "tables/glm_results.png")
+```
+
+
+
+
+
+
+
+
+# Black-tailed Godwit Habitat Preferences: Summary of Key Findings
+
+## Environmental Factors Influencing Godwit Presence/Absence
+
+| Environmental Factor | Relationship | Supporting Evidence | Statistical Significance |
+|----------------------|--------------|--------------------|-----------------------|
+| **Elevation** | Positive | Higher elevations increase likelihood of godwit occurrence (Fig. 3) | β = 0.017, p < 0.05 |
+| **Birch Cover** | Positive | Greater birch cover increases likelihood of godwit occurrence (Fig. 3) | β = 0.027, p < 0.05 |
+| **Water Table Depth** | Negative | Godwit occurrence declines in areas with deeper water tables (Fig. 3) | β = -0.018, p < 0.001 |
+| **Pool Cover** | Negative | Extensive pool coverage reduces godwit occurrence (Fig. 3) | β = -0.061, p < 0.05 |
+| **Sedge Pools** | Non-linear | Strong positive effect of 1-2 pools, plateauing at higher numbers (Fig. 4) | One pool: β = 4.569 ± 1.064, p < 0.001<br>Two pools: β = 4.121 ± 1.519, p < 0.01<br>Three pools: β = 18.70 ± 1345, p = 0.989 (not significant)<br>No pools: β = -0.442 ± 0.711, p = 0.53 (not significant) |
+| **Sedge Pool Probability** | Positive threshold | Probability of godwit observation:<br>- No pools: 39.1%<br>- One pool: 98.4%<br>- Two pools: 97.5%<br>- Three pools: near 100% | Demonstrates diminishing returns beyond optimal threshold |
+
+## Environmental Factors Influencing Godwit Abundance/Density
+
+| Environmental Factor | Relationship | Supporting Evidence | Statistical Significance |
+|----------------------|--------------|--------------------|-----------------------|
+| **Distance to Hayfields** | Negative | Highest densities (3-4 birds/ha) observed within 100m of hayfields; abundance declines with increasing distance (Fig. 6, 7) | β = -0.0009, p < 0.05 |
+| **Sward Grass Height** | Negative | Godwit density decreases as vegetation height increases (Fig. 6) | β = -1.22, p < 0.05 |
+| **Hayfield Presence** | Slightly negative | Godwits prefer areas near but not directly in hayfields (Fig. 6) | β = -0.0009, p < 0.05 |
+
+## Principal Component Analysis Results
+
+| Principal Component | Variance Explained | Key Factors | Relationship to Godwits |
+|---------------------|-------------------|------------|------------------------|
+| **PC1 + PC2 (Presence)** | 39.2% | Wetland areas with Juncus vegetation, shallow water tables, proximity to hayfields | Godwits strongly associate with these features for breeding habitat (Fig. 2a) |
+| **PC3 + PC4 (Presence)** | 21.3% | Moderate drainage infrastructure, sedge-dominated wetlands, consistent pools | Godwits favor these while avoiding willow cover and sandy/gravel substrates (Fig. 2b) |
+| **PC1 (Abundance)** | 21.2% | Elevational and hydrological gradient | Higher godwit abundance in higher elevation areas with moderate water table depths; lower in sandy/gravel areas with deeper water tables (Fig. 5a) |
+| **PC2 (Abundance)** | 18% | Vegetation structure | Greater godwit abundance in areas with shorter sward heights and increased birch cover; lower in areas with taller sward heights and extensive willow cover (Fig. 5a) |
+| **PC3 (Abundance)** | 10.9% | Wetland fragmentation and vegetation complexity | Higher godwit density in areas with sedge pools and Juncus cover; lower in areas with extensive land drainage (Fig. 5b) |
+| **PC4 (Abundance)** | 10.4% | Landscape structure and agricultural proximity | Higher godwit density near hayfields; lower in areas with extensive willow cover (Fig. 5b) |

@@ -1,0 +1,27 @@
+{
+    "id": "CB0D656F",
+    "path": "C:/Users/Katie/Desktop/Data science for biology/sem1/Stats for Bio/summative_2/godwits/scripts/aim2/pca_density.R",
+    "project_path": "scripts/aim2/pca_density.R",
+    "type": "r_source",
+    "hash": "3521479557",
+    "contents": "",
+    "dirty": false,
+    "created": 1744886854815.0,
+    "source_on_save": false,
+    "relative_order": 5,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "ignored_words": "godwit\n",
+        "docOutlineVisible": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1745237639,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1745237639831,
+    "read_only": false,
+    "read_only_alternatives": []
+}

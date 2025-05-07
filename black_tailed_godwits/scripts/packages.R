@@ -1,0 +1,63 @@
+# PACKAGES ----
+install.packages(c(
+  "broom",
+  "broom.helpers",
+  "car",
+  "cocorresp",
+  "factoextra",
+  "ggrepel",
+  "GGally",
+  "gridExtra",
+  "here",
+  "janitor",
+  "lmerTest",
+  "MASS",
+  "mgcv",
+  "moder",
+  "moderndive",
+  "nlme",
+  "PerformanceAnalytics",
+  "permute",
+  "performance",
+  "readr",
+  "readxl",
+  "rstatix",
+  "stats",
+  "stringr",
+  "tibble",
+  "tidyverse",
+  "vegan",
+  "gtExtras",
+  "RColorBrewer"
+))
+
+
+# LIBRARY ----
+library(broom)
+library(broom.helpers)
+library(car)
+library(cocorresp)
+library(factoextra)
+library(ggrepel)
+library(GGally)
+library(gridExtra)
+library(here)
+library(janitor)
+library(lmerTest)
+library(MASS)
+library(mgcv)
+library(moder)
+library(moderndive)
+library(nlme)
+library(PerformanceAnalytics)
+library(permute)
+library(performance)
+library(readr)
+library(readxl)
+library(rstatix)
+library(stats)
+library(stringr)
+library(tibble)
+library(tidyverse)
+library(vegan)
+
