@@ -1,0 +1,84 @@
+Variable,Original Variable,Data Type,Number of Entries,Missing Values,Description,Example Values,Mean,Min,Max,Std Dev,25%,50%,75%
+customer_type,customer_type,object,5521,0 (0.0%),Classification of the customer or customer segmentation category,"Rural & Low-income, Middle-Class Families, Young & Low-income, Seniors & Retired, Wealthy & Affluent",Rural & Low-income,Middle-Class Families,Young & Low-income,Na,Na,Na,Na
+total_properties_owned,number_of_houses,int64,5521,0 (0.0%),Total number of properties owned by the household,"1, 2, 3, 10, 5",1.111,1,10,0.41,1,1,1
+avg_household_size,avg_household_size,int64,5521,0 (0.0%),Number of people living in the household,"3, 2, 4, 1, 5",2.681,1,5,0.79,2,3,3
+avg_age,avg_age,object,5521,14 (0.25%),Age bracket of the household's primary members,"30-40 years, 40-50 years, 20-30 years, 50-60 years, 60-70 years",40-50 years,20-30 years,70-80 years,Na,Na,Na,Na
+household_classification,household_profile,object,5521,0 (0.0%),Lifestyle classification of the household,"Family with Grown-Ups, Average Family, Farmers, Living Well, Conservative Families",Family with Grown-Ups,Average Family,Successful Hedonists,Na,Na,Na,Na
+married,married,int64,5521,0 (0.0%),Number/proportion of married people in the segment (out of 10),"7, 6, 3, 5, 0",6.188,0,9,1.903,5,6,7
+living_togethers,living_together,int64,5521,0 (0.0%),Represents living togethers,"0, 2, 1, 6, 4",0.883,0,7,0.967,0,1,1
+extended_family_members,other_relation,int64,5521,0 (0.0%),Number/proportion of people in other family relationships (out of 10),"2, 4, 3, 0, 1",2.286,0,9,1.714,1,2,3
+singles,singles,int64,5521,0 (0.0%),Number/proportion of single people (out of 10),"1, 0, 4, 2, 3",1.88,0,9,1.795,0,2,3
+childless_households,household_without_children,int64,5521,0 (0.0%),Number/proportion of households without children (out of 10),"2, 4, 3, 5, 6",3.235,0,9,1.62,2,3,4
+households_with_children,household_with_children,int64,5521,0 (0.0%),Number/proportion of households with children (out of 10),"6, 5, 2, 4, 3",4.303,0,9,2.007,3,4,6
+highly_educated,high_education_level,int64,5521,0 (0.0%),Number/proportion with high education (out of 10),"1, 0, 3, 5, 4",1.46,0,9,1.615,0,1,2
+moderately_educated,medium_education_level,int64,5521,0 (0.0%),Number/proportion with medium education (out of 10),"2, 5, 4, 3, 1",3.356,0,9,1.764,2,3,4
+low_education,low_education_level,int64,5521,0 (0.0%),Number/proportion with low education (out of 10),"7, 4, 2, 0, 5",4.57,0,9,2.298,3,5,6
+high_status_professionals,high_status,int64,5521,0 (0.0%),Number/proportion in high-status professions (out of 10),"1, 0, 4, 2, 3",1.891,0,9,1.794,0,2,3
+entrepreneurs,entrepreneur,int64,5521,0 (0.0%),Number/proportion who are entrepreneurs (out of 10),"0, 5, 1, 2, 3",0.397,0,5,0.774,0,0,1
+farmer,farmer,int64,5521,0 (0.0%),Number/proportion who are farmers (out of 10),"1, 0, 4, 3, 2",0.522,0,9,1.057,0,0,1
+middle_management,middle_management,int64,5521,0 (0.0%),Number/proportion in middle management roles (out of 10),"2, 5, 7, 3, 0",2.907,0,9,1.843,2,3,4
+skilled_workers,skilled_labourers,int64,5521,0 (0.0%),Number/proportion of skilled workers (out of 10),"5, 0, 1, 2, 8",2.22,0,9,1.729,1,2,3
+unskilled_workers,unskilled_labourers,int64,5521,0 (0.0%),Number/proportion of unskilled workers (out of 10),"2, 4, 0, 5, 1",2.306,0,9,1.694,1,2,3
+social_class_a,social_class_a,int64,5521,0 (0.0%),Number/proportion in social class A (highest) (out of 10),"1, 0, 3, 9, 2",1.619,0,9,1.721,0,1,2
+social_class_b1,social_class_b1,int64,5521,0 (0.0%),Number/proportion in social class B1 (out of 10),"1, 2, 5, 0, 3",1.611,0,9,1.329,1,2,2
+social_class_b2,social_class_b2,int64,5521,0 (0.0%),Number/proportion in social class B2 (out of 10),"2, 3, 0, 1, 4",2.205,0,9,1.534,1,2,3
+social_class_c,social_class_c,int64,5521,0 (0.0%),Number/proportion in social class C (out of 10),"6, 5, 4, 0, 8",3.756,0,9,1.935,2,4,5
+social_class_d,social_class_d,int64,5521,0 (0.0%),Number/proportion in social class D (lowest) (out of 10),"1, 0, 2, 5, 3",1.066,0,9,1.3,0,1,2
+rented_house,rented_house,int64,5521,0 (0.0%),Number/proportion living in rented housing (out of 10),"1, 2, 7, 5, 4",4.244,0,9,3.087,2,4,7
+home_owner,home_owner,int64,5521,0 (0.0%),Number/proportion who own their home (out of 10),"8, 7, 2, 4, 5",4.764,0,9,3.088,2,5,7
+single_car,owns_one_car,int64,5521,0 (0.0%),Number/proportion owning one car (out of 10),"8, 7, 9, 6, 5",6.037,0,9,1.551,5,6,7
+dual_car,owns_two_cars,int64,5521,0 (0.0%),Number/proportion owning two cars (out of 10),"0, 1, 2, 3, 4",1.32,0,7,1.205,0,1,2
+no_car,owns_no_car,int64,5521,0 (0.0%),Number/proportion owning no car (out of 10),"1, 2, 0, 3, 4",1.96,0,9,1.596,1,2,3
+national_health_insurance,national_health_insurance,int64,5521,0 (0.0%),Number/proportion with national health insurance (out of 10),"8, 6, 9, 7, 5",6.276,0,9,1.976,5,7,8
+private_health_insurance,private_health_insurance,int64,5521,0 (0.0%),Number/proportion with private health insurance (out of 10),"1, 3, 0, 2, 4",2.73,0,9,1.979,1,2,4
+income_below_30k,income_less_than_30k,int64,5521,0 (0.0%),Number/proportion with income below 30K (out of 10),"0, 2, 4, 1, 5",2.571,0,9,2.085,1,2,4
+income_30k_to_45k,income_30k_to_45k,int64,5521,0 (0.0%),Number/proportion with income between 30K-45K (out of 10),"4, 0, 5, 2, 3",3.531,0,9,1.879,2,4,5
+income_45k_to_75k,income_45k_to_75k,int64,5521,0 (0.0%),Number/proportion with income between 45K-75K (out of 10),"5, 0, 3, 9, 1",2.738,0,9,1.932,1,3,4
+income_75k_to_122k,income_75k_to_122k,int64,5521,0 (0.0%),Number/proportion with income between 75K-122K (out of 10),"0, 2, 1, 4, 3",0.797,0,9,1.166,0,0,1
+income_above_123k,income_above_123k,int64,5521,0 (0.0%),Number/proportion with income above 123K (out of 10),"0, 2, 1, 3, 4",0.203,0,7,0.545,0,0,0
+mean_income,average_income,int64,5521,0 (0.0%),Average income value of the segment,"4, 5, 3, 6, 2",3.788,0,9,1.317,3,4,4
+purchasing_power_group,purchasing_power_class,int64,5521,0 (0.0%),Purchasing power classification category,"3, 4, 5, 7, 2",4.244,1,8,2.003,3,4,6
+private_third_party,private_third_party_insurance_contribution,object,5521,9 (0.16%),Amount contributed to private third-party insurance,"0, 50-99, Jan-49, 100-199",0,0,Jan-49,Na,Na,Na,Na
+business_third_party,business_third_party_insurance_contribution,object,5521,0 (0.0%),Amount contributed to business third-party insurance,"0, Jan-49, 100-199, 200-499, 50-99",0,0,Jan-49,Na,Na,Na,Na
+agricultural_third_party,agricultural_third_party_insurance_contribution,object,5521,0 (0.0%),Amount contributed to agricultural third-party insurance,"0, 100-199, 200-499, 50-99",0,0,50-99,Na,Na,Na,Na
+car_insurance,car_policy_contribution,int64,5521,0 (0.0%),Amount contributed to car insurance policies,"6, 0, 5, 7, 8",2.98,0,8,2.921,0,5,6
+van_insurance,delivery_van_policy_contribution,float64,5521,19 (0.34%),Amount contributed to delivery van insurance policies,"0, 5, 6, 7",0.051,0,7,0.546,0,0,0
+bike_insurance,motorcycle_scooter_policy_contribution,int64,5521,0 (0.0%),Amount contributed to motorcycle/scooter insurance policies,"0, 4, 5, 6, 7",0.174,0,7,0.892,0,0,0
+lorry_insurance,lorry_policy_contribution,int64,5521,0 (0.0%),Amount contributed to lorry insurance policies,"0, 6, 4, 9",0.01,0,9,0.251,0,0,0
+trailer_insurance,trailer_policy_contribution,float64,5521,19 (0.34%),Amount contributed to trailer insurance policies,"0, 2, 1, 3, 5",0.021,0,5,0.212,0,0,0
+tractor_insurance,tractor_policy_contribution,int64,5521,0 (0.0%),Amount contributed to tractor insurance policies,"0, 3, 5, 4, 6",0.095,0,6,0.614,0,0,0
+agrimachine_insurance,agricultural_machine_policy_contribution,int64,5521,0 (0.0%),Amount contributed to agricultural machine insurance policies,"0, 2, 6, 4, 3",0.014,0,6,0.235,0,0,0
+moped_insurance,moped_policy_contribution,float64,5521,52 (0.94%),Amount contributed to moped insurance policies,"0, 3.251, 3.34, 3.915, 3.834",0.249,0,6.059,0.939,0,0,0
+life_insurance,life_insurance_contribution,float64,5521,60 (1.09%),Amount contributed to life insurance policies,"0, 4.019, 4.91, 4.756, 3.698",0.225,0,9.048,1.018,0,0,0
+private_accident_insurance,private_accident_insurance_contribution,float64,5521,52 (0.94%),Amount contributed to personal accident insurance policies,"0, 2.752, 2.651, 2.565, 2.236",0.016,0,6.787,0.239,0,0,0
+family_accident_insurance,family_accident_insurance_contribution,float64,5521,52 (0.94%),Amount contributed to family accident insurance policies,"0, 2.107, 2.284, 3.801, 3.547",0.017,0,3.987,0.229,0,0,0
+disability_insurance,disability_insurance_contribution,float64,5521,72 (1.3%),Amount contributed to disability insurance policies,"0, 6.198, 6.293, 6.414, 4.331",0.027,0,7.974,0.421,0,0,0
+fire_insurance,fire_insurance_contribution,float64,5521,55 (1.0%),Amount contributed to fire insurance policies,"5.681, 2.022, 2.482, 2.427, 6.11",2.14,0,62.697,2.553,0,2.179,4.067
+surfboard_insurance,surfboard_insurance_contribution,float64,5521,52 (0.94%),Amount contributed to surfboard insurance policies,"0, 1.766, 1.467, 3.125",0.001,0,3.125,0.052,0,0,0
+boat_insurance,boat_insurance_contribution,float64,5521,52 (0.94%),Amount contributed to boat insurance policies,"0, 1.686, 4.538, 1.842, 6.382",0.021,0,6.582,0.301,0,0,0
+bicycle_insurance,bicycle_insurance_contribution,float64,5521,52 (0.94%),Amount contributed to bicycle insurance policies,"0, 1.549, 1.239, 1.851, 1.348",0.04,0,1.968,0.246,0,0,0
+property_insurance,property_insurance_contribution,float64,5521,52 (0.94%),Amount contributed to property insurance policies,"0, 2.745, 2.13, 1.089, 3.267",0.02,0,6.754,0.25,0,0,0
+social_security_insurance,social_security_insurance_contribution,float64,5521,52 (0.94%),Amount contributed to social security insurance policies,"0, 4.804, 4.69, 4.381, 4.199",0.055,0,5.707,0.471,0,0,0
+private_third_party_policies_count,number_private_third_party_insurance,float64,5521,52 (0.94%),Total count of private third-party insurance policies held,"0, 2, 1",0.404,0,2,0.493,0,0,1
+business_third_party_policies_count,number_business_third_party_insurance,float64,5521,52 (0.94%),Total count of business third-party insurance policies held,"0, 1, 5",0.015,0,5,0.136,0,0,0
+agricultural_third_party_policies_count,number_agricultural_third_party_insurance,float64,5521,52 (0.94%),Total count of agricultural third-party insurance policies held,"0, 1",0.021,0,1,0.144,0,0,0
+car_policy_count,number_car_policies,int64,5521,0 (0.0%),Total count of car insurance policies held,"1, 0, 2, 7, 3",0.564,0,7,0.605,0,1,1
+van_policy_count,number_delivery_van_policies,int64,5521,0 (0.0%),Total count of delivery van insurance policies held,"0, 1, 4, 2, 3",0.011,0,4,0.133,0,0,0
+bike_policy_count,number_motorcycle_scooter_policies,int64,5521,0 (0.0%),Total count of motorcycle/scooter insurance policies held,"0, 1, 2",0.039,0,2,0.203,0,0,0
+lorry_policy_count,number_lorry_policies,int64,5521,0 (0.0%),Total count of lorry insurance policies held,"0, 1, 2, 3",0.002,0,3,0.065,0,0,0
+trailer_policy_count,number_trailer_policies,float64,5521,32 (0.58%),Total count of trailer insurance policies held,"0, 1, 2, 3",0.012,0,3,0.126,0,0,0
+tractor_policy_count,number_tractor_policies,float64,5521,32 (0.58%),Total count of tractor insurance policies held,"0, 1, 2, 3, 4",0.035,0,4,0.246,0,0,0
+agrimachine_policy_count,number_agricultural_machine_policies,float64,5521,32 (0.58%),Total count of agricultural machine insurance policies held,"0, 1, 3, 2, 6",0.007,0,6,0.128,0,0,0
+moped_policy_count,number_moped_policies,float64,5521,32 (0.58%),Total count of moped insurance policies held,"0, 1, 2",0.07,0,2,0.265,0,0,0
+life_insurance_count,number_life_insurances,float64,5521,32 (0.58%),Total count of life insurance policies held,"0, 1, 2, 8, 3",0.076,0,8,0.375,0,0,0
+personal_accident_count,number_private_accident_insurances,float64,5521,32 (0.58%),Total count of personal accident insurance policies held,"0, 1",0.005,0,1,0.073,0,0,0
+family_accident_count,number_family_accident_insurances,float64,5521,32 (0.58%),Total count of family accident insurance policies held,"0, 1",0.006,0,1,0.077,0,0,0
+disability_insurance_count,number_disability_insurances,int64,5521,0 (0.0%),Total count of disability insurance policies held,"0, 1, 2",0.005,0,2,0.079,0,0,0
+fire_insurance_count,number_fire_insurances,int64,5521,0 (0.0%),Total count of fire insurance policies held,"1, 0, 2, 3, 4",0.569,0,7,0.56,0,1,1
+surfboard_insurance_count,number_surfboard_insurances,int64,5521,0 (0.0%),Total count of surfboard insurance policies held,"0, 1",0.001,0,1,0.023,0,0,0
+boat_insurance_count,number_boat_insurances,int64,5521,0 (0.0%),Total count of boat insurance policies held,"0, 2, 1",0.006,0,2,0.081,0,0,0
+bicycle_insurance_count,number_bicycle_insurances,int64,5521,0 (0.0%),Total count of bicycle insurance policies held,"0, 1, 2, 3",0.033,0,3,0.215,0,0,0
+property_insurance_count,number_property_insurances,float64,5521,49 (0.89%),Total count of property insurance policies held,"0, 1, 2",0.008,0,2,0.092,0,0,0
+social_security_count,number_social_security_insurances,float64,5521,49 (0.89%),Total count of social security insurance policies held,"0, 1, 2",0.014,0,2,0.12,0,0,0
+mobile_home_policy_count,number_mobile_home_policies,float64,5521,74 (1.34%),Total count of mobile home insurance policies held,"0, 1",0.06,0,1,0.238,0,0,0
+mobile_home_policy,mobile_home_policies,object,5521,65 (1.18%),Have or Dont have a mobile home insurance policy,"No Policy, Has Policy",No Policy,Has Policy,No Policy,Na,Na,Na,Na
