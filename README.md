@@ -1,4 +1,4 @@
-# MSc_Data_Science_for_Biology
+# MSc Data Science for Biology
 
 ## 📊 BIO-7056A: Statistics for Biologists
 
@@ -66,14 +66,57 @@ This module reflects my capability to:
 - Tailor model complexity to data structure and interpretability
 - Generate outputs that are simultaneously **ecologically grounded and methodologically transparent**
 
-## CMP-7010A: Introduction to Python for computer scientists
-Using Jupyter Notebooks
-- Conduct statistical analysis of ocean temperatures simulated by the GFDL-CM4 model.
+## 🐍 CMP-7010A: Introduction to Python for Computer Scientists
+
+Used Python and scientific computing libraries to conduct a full-scale analysis of historical (1950–2000) and projected (2050–2100) ocean temperature trends in the North Atlantic using the GFDL-CM4 climate model. Applied structured programming, statistical testing, and geospatial visualisation to explore depth-specific warming, temporal variability, and seasonal signals.
+
+### [Climate Model Analysis – Summative Project](https://github.com/KFarrow11/MSc_Data_Science_for_Biology/blob/main/introduction_to_python/Summative_tasks_100318577.ipynb)
+
+### 🧠 Skills Demonstrated
+
+- Structured programming with reusable functions and annotated Jupyter cells
+- Data wrangling and slicing using `xarray` and NumPy arrays across 4D `.nc` files
+- Statistical testing using annual mean comparisons (two-sample t-tests with `scipy.stats`)
+- Weighting calculations using cosine(latitude) for spatial averaging
+- Seasonal filtering and resampling to compare boreal summer vs. winter warming
+- Geospatial visualisation using `matplotlib`, `cartopy`, and significance-based hatch overlays
+- Scientific communication through panel plots, annotated summaries, and interpretable colour maps
+
+### 🗂 Task Breakdown
+
+#### **Task 1: Annual & Monthly Warming Patterns**
+- Computed spatially weighted average temperatures by year/month.
+- Compared temperature changes between the historical and future periods at 2.5 m and 2500 m.
+- Visualised:
+  - Monthly mean temperature differences with ±1 SD shading
+  - Decadal warming trends, highlighting seasonal patterns
+- Found:
+  - Surface warming ~3 °C
+  - Deep ocean warming ~0.2 °C but consistent
+
+#### **Task 2: Spatial Distribution of Warming**
+- Plotted 2D difference maps using `pcolormesh()` and diverging `RdBu_r` palette.
+- Created continent-aware maps with `cartopy`, overlayed land boundaries and axis labels.
+- Interpreted spatial patterns and warming hotspots along the Gulf Stream and mid-latitude basins.
+
+#### **Task 3: Seasonal Warming Analysis**
+- Isolated DJF (winter) and JJA (summer) periods via datetime filtering.
+- Generated seasonal anomaly maps for each depth.
+- Found stronger surface warming in summer, with polar amplification near Greenland.
+
+#### **Task 4: Significance Testing of Warming**
+- Conducted cell-wise t-tests using annual means (1950–2000 vs. 2050–2100).
+- Visualised areas of **statistically significant change** (p < 0.05) via stippling.
+- The majority of surface grid cells showed significant warming; deep ocean changes were subtler but consistent.
+
+#### **Task 5: Summarising & Communicating Findings**
+- Integrated plots into figure panels with consistent colourmaps, titles, and scale bars.
+- Summarised implications for future ocean stratification and climate resilience.
+- Framed results using interpretable metrics for stakeholders, linking ocean warming to broader environmental trends.
   
 
 ## BIO-7051B: Data Science and Bioinformatics
 Using a combination of bash scripting to access HPC and R to run bioinformatics projects
-
 
 ## CMP-7023B: Data Mining
 Applied **data mining techniques** in Python using Jupyter Notebooks, with a focus on building interpretable, fair, and evidence-based models.
@@ -81,7 +124,7 @@ Applied **data mining techniques** in Python using Jupyter Notebooks, with a foc
 **Summative highlights:**
 
 - [Preliminary Data Analysis](https://github.com/KFarrow11/MSc_Data_Science_for_Biology/tree/main/data%20mining/Preliminary%20Data%20Analysis):  
-  Explored employability and salary outcomes of 26,000+ data science graduates. Developed key capabilities in:
+  Explored the employability and salary outcomes of 26,000+ data science graduates. Developed key capabilities in:
   - **Data audit & ethical exclusion**: Removed biased or redundant variables (e.g. race, surplus), reinforcing fairness in predictive modelling.
   - **Cleaning & wrangling**: Standardised case formats, handled missing data, and applied IQR filtering for outlier control.
   - **Visual storytelling**: Created KDEs, grouped boxplots, and formatted summary tables to uncover salary-age dynamics and gender disparities.
