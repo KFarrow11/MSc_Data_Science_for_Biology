@@ -101,9 +101,53 @@ Applied **data mining techniques** in Python using Jupyter Notebooks, with a foc
 - Deepened understanding of **model evaluation metrics and fairness trade-offs**
 - Commitment to **transparency, interpretability, and stakeholder-ready communication**
 
+## 📺 CMP-7027B: Information Visualisation
 
-## CMP-7022B: Information Visualisation
-Using a combination of JavaScript and R Quarto to make a series of interactive dashboards to illustrate a series of datasets in a visual format. 
-- JavaScript was used in IT workshops
-- Summative work was made using R Quarto 
+Designed and implemented an interactive, stakeholder-ready **measles surveillance dashboard** using **R**, `quarto`, `plotly`, and `leaflet`. The project translated multi-decade, multi-jurisdictional datasets into actionable visual narratives for outbreak tracking, programme evaluation, and public health communication.
+
+### [Measles Watch Dashboard](https://github.com/KFarrow11/MSc_Data_Science_for_Biology/blob/main/information_visualisation/measles_db_final.qmd)
+
+### 🎯 Purpose
+
+Measles Watch addresses gaps in global surveillance by offering a unified visual platform for analysing historical trends, regional inequalities, and vaccination uptake from 1980 to 2021.
+
+The dashboard was built to support:
+
+- **Situational awareness** across three spatial scales (global, UK, US)
+- **Demographic equity monitoring** using age, sex, and vaccine coverage overlays
+- **Health communication** through accessible, animated storytelling
+- **Rapid decision-making** with interactive summaries and burden-ranking metrics
+
+It was designed as a **scalable, modular system**, capable of adapting to other disease contexts (e.g. influenza, Zika, Ebola) using reproducible code and harmonised data standards.
+
+### 🛠️ Features & Functionality
+
+- **Animated choropleth mapping (1980–2021):**  
+  Built global maps of cases and deaths with `plotly::plot_geo()` and animated year sliders. Applied custom palettes, tooltips, and dynamic country labels for interpretability.
+
+- **Continental analytics panels:**  
+  Included value boxes for key milestones (e.g. most improved countries, peak burden year), animated bar charts by continent, and narrative summaries that update based on user inputs.
+
+- **Vaccination coverage overlays (MCV1, MCV2):**  
+  Merged WHO data into dashboard timelines and layered plots. Created animated scatterplots and diverging bubble maps to explore change over time and surface coverage gaps.
+
+- **Demographic stratification & hesitancy modules:**  
+  Linked measles incidence to age/sex groups. Built regional age pyramids and belief summaries using `leaflet`, hover markers, and visual encodings adapted for health literacy.
+
+- **Subnational resolution (UK & USA):**  
+  Used ONS topojsons and CDC metadata to create dropdown-selectable regional breakdowns. Added state-level doughnut charts, trend plots, and animated indicators for local surveillance.
+  
+### 🧠 Skills Demonstrated
+
+- **Geospatial & multiscale visualisation:**  
+  Developed hover-enabled choropleths, multi-tab dashboards, and linked time-series components with consistent coordinate mapping.
+
+- **Data integration & harmonisation:**  
+  Joined and cleaned datasets across different naming schemas and levels of granularity. Created custom mapping files to resolve country–continent inconsistencies and streamline joins.
+
+- **Interface design & accessibility:**  
+  Styled all dashboard elements for clarity using CSS overrides, scalable icons, and high-contrast thematic elements in line with NHS/WHO visual best practices.
+
+- **Narrative communication:**  
+  Used value boxes, context-aware highlight cards, and animation pacing to guide users through epidemiological stories. Framed data in actionable language suitable for both technical and public-facing reports.
 
