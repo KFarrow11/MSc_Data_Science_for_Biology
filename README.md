@@ -2,36 +2,69 @@
 
 ## 📊 BIO-7056A: Statistics for Biologists
 
-Used **R** to apply statistical techniques to ecological field data, focusing on godwit foraging behaviour across estuarine habitats. Analyses were structured around two central research aims:
+Applied a wide range of statistical techniques in **R** to explore ecological field data and behavioural outcomes in conservation contexts. Across two summative projects — *Kooki Bird Productivity* and *Black-Tailed Godwit Foraging Behaviour* — I developed and demonstrated advanced proficiency in:
 
-### [Black-Tailed Godwit Foraging Study](https://github.com/KFarrow11/MSc_Data_Science_for_Biology/tree/main/Stats_for_biologists/black_tailed_godwits)
+- **Data wrangling & cleaning** using `tidyverse`, `janitor`, and `dplyr` to restructure and prepare long-format ecological data
+- Constructing and simplifying **GLMs and linear regression models**, including interaction terms and categorical predictors
+- Diagnosing and addressing **non-normality and heteroscedasticity**, and selecting appropriate **non-parametric tests**
+- Applying **dimensionality reduction techniques** such as PCA and interpreting multivariate ecological gradients
+- Validating models through **AIC, residual analysis, variance inflation factors (VIF)**, and leverage checks
+- Translating quantitative results into **evidence-based ecological insights** using GT tables, violin plots, PCA biplots, and smoothed regression curves
+- Structuring reproducible workflows grounded in **testable hypotheses and stakeholder-facing communication**
 
-**Aim 1: Habitat Predictors of Foraging Presence**
-- Modelled **godwit occurrence (presence/absence)** using binomial GLMs with 12 candidate predictors (e.g. elevation, birch cover, pool cover, water table depth).
-- Conducted **stepwise simplification** using likelihood ratio tests to isolate ecologically meaningful predictors.
+### 🐤 Kooki Bird Summative Analysis
+
+Used a five-question framework to compare chick productivity, habitat preference, and environmental drivers across *wild and captive Kooki birds*.
+
+- **Q1 & Q1b**: Assessed chick productivity using **distributional diagnostics**, log transformation, and **Wilcoxon rank-sum test** to compare breeding origin effects (wild vs. captive). Demonstrated:
+  - Expertise in **assumption testing and data transformation**
+  - Application of **non-parametric alternatives** when parametric models were unsuitable
+
+- **Q2**: Fitted a **GLM with breeding group × habitat interaction** to explore behavioural preferences. Captured divergent space use between wild and captive birds and showcased:
+  - Interpretation of **multi-level interaction terms**
+  - Violin plot visualisation to highlight behavioural divergence
+
+- **Q3 & Q4**: Built and simplified **separate GLMs** for wild and captive abundance using rainfall, temperature, and fruit availability. Demonstrated:
+  - Selection of **ecologically meaningful predictors**
+  - Clear communication of covariate effects with summary tables and diagnostics
+
+- **Q5**: Modelled full-year abundance using **season × breeding group interaction** to reveal seasonal cycles in wild vs. captive activity. Communicated findings through:
+  - Grouped bar plots and statistical interpretation of interaction coefficients
+  - Integration of **temporal, ecological, and behavioural patterns**
+
+### 🐦 Black-Tailed Godwit Foraging Study
+
+Investigated foraging site selection and intensity in estuarine quadrats through two complementary aims, grounded in both **habitat modelling** and **multivariate analysis**.
+
+#### Aim 1: Habitat Predictors of Foraging Presence
+
+- Fitted a **binomial GLM** across 12 environmental predictors, simplified via likelihood ratio testing and AIC.
 - Identified:
-  - *Birch cover*, *elevation*, and *number of sedge pools* as strong positive predictors of godwit presence.
-  - *Water table depth* and *pool cover* as negative predictors, indicating avoidance of deeply submerged or overly wet areas.
-- Converted log-odds outputs into **predicted probabilities**, generating visualisations of probability curves stratified by habitat features.
-- Validated model via **VIF scores**, **binned residuals**, and `performance::check_model()` to ensure robust inferences.
+  - Positive predictors: **elevation**, **birch cover**, **sedge pool abundance**
+  - Negative predictors: **water table depth**, **pool cover**
+- Converted log-odds to **predicted probabilities**, stratified by sedge pool count and habitat features.
+- Created high-quality **visual diagnostics**, residual plots, and [GT model summaries](../gt_table1.png), demonstrating:
+  - End-to-end proficiency in **ecological logistic regression**
+  - Translation of statistical estimates into **habitat suitability metrics**
 
-**Aim 2: Foraging Density and Environmental Gradients**
-- Filtered dataset to include only sites with **confirmed godwit presence** to model foraging intensity (pecks per minute).
-- Performed **principal component analysis (PCA)** on 11 environmental variables, producing four interpretable ecological gradients:
-  - **PC1 (Wetness gradient)**: from dry, elevated sites to sedge-rich wet habitats.
-  - **PC2 (Vegetation openness)**: contrasting birch/hayfield structure with more open marshes.
-  - **PC3 (Willow-dominant wetlands)** and **PC4 (Anthropogenic modifications)**.
-- Regressed foraging density against PC1–PC4 and found that:
-  - Higher densities occurred in **wetter**, Juncus-rich environments (low PC1).
-  - Open vegetation (PC2) supported more frequent foraging than densely wooded or managed sites.
-- Produced **custom PCA biplots**, **density-tiered scatterplots**, and contribution charts to visualise ecological drivers of godwit behaviour.
+#### Aim 2: Foraging Density and Environmental Gradients
 
-**Skills developed across both aims:**
-- End-to-end application of **GLMs, PCA, model diagnostics, and data visualisation**
-- Ecological interpretation of multivariate patterns and behavioural responses
-- Structuring analyses around **testable hypotheses** and grounded environmental theory
-- Translating statistical findings into **evidence-based conservation recommendations**
-  
+- Applied **PCA** to 11 environmental variables, capturing four axes of ecological structure:
+  - **PC1**: Wetness gradient (elevation, water depth, Juncus, sedge pools)
+  - **PC2**: Vegetation openness (hayfield, birch)
+  - PC3: Willow-dominated wetlands  
+  - PC4: Anthropogenic influence
+- Regressed foraging density on PCs, finding **PC1** and **PC2** significant. Higher foraging observed in:
+  - **Wet, Juncus-rich areas (low PC1)**
+  - **Open marshland with minimal woody vegetation (low PC2)**
+- Delivered:
+  - **Custom PCA biplots**, stratified density plots, and scatterplots
+  - A full model validation workflow with assumption checks
+
+This module reflects my capability to:
+- Move fluidly between **hypothesis testing**, **predictive modelling**, and **dimensionality reduction**
+- Tailor model complexity to data structure and interpretability
+- Generate outputs that are simultaneously **ecologically grounded and methodologically transparent**
 
 ## CMP-7010A: Introduction to Python for computer scientists
 Using Jupyter Notebooks
