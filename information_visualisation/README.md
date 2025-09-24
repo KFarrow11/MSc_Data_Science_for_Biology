@@ -169,14 +169,6 @@ To adapt this dashboard for other diseases:
 
 ## Installation and Setup
 
-Certainly! Here's how you can embed the full reference list into your document with the prerequisites section. This version assumes you're working in a Quarto or R Markdown document where references are included in a dedicated section. I've added the reference list immediately after the code block and formatted everything in a clean, professional style:
-
-------------------------------------------------------------------------
-
-Here’s your updated section with a clean, numbered reference list following the prerequisites block. I’ve also refined the formatting for consistency and clarity:
-
-------------------------------------------------------------------------
-
 ### Prerequisites
 
 ``` r
@@ -187,10 +179,6 @@ install.packages(c(
 ```
 
 ### References
-
-Perfect—here’s your reference list, formatted exactly as you described, with the package (or platform) name at the beginning of each entry:
-
-------------------------------------------------------------------------
 
 1.  **R** R Core Team (2024). *R: A Language and Environment for Statistical Computing*. R Foundation for Statistical Computing, Vienna, Austria. https://www.R-project.org\
 2.  **RStudio (version 2025.04.1)** Posit team (2025). *RStudio: Integrated Development Environment for R*. Posit Software, PBC, Boston, MA. https://posit.co\
@@ -452,3 +440,4 @@ Available at: https://github.com/KFarrow11/100318577_Measles_Watch_Dashboard/REA
 ### 📚 Data Citation Requirements
 
 When using specific datasets from this dashboard, please cite the sources as listed above. For academic publications, include the dashboard and relevant primary data source citations.
+
